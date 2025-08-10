@@ -1,0 +1,63 @@
+# SAC Trading Agent Configuration
+
+# File Paths
+data:
+  training_data: "data/trainalt_data.csv"
+  entry_points: "data/deflection_data.csv"
+  model_save_path: "models/"
+
+# Environment Parameters
+environment:
+  max_trade_steps: 7
+  lookback_window: 15
+  state_columns:
+    - "sto_osc"
+    - "macd"
+    - "adx"
+    - "obv"
+    - "n_atr"
+    - "log_ret"
+    - "newsapi"
+  ema_alpha_norm: 0.05
+  initial_tp: 0.03      # Initial Take Profit (3%)
+  initial_sl: -0.03     # Initial Stop Loss (-3%)
+  tp_sl_width: 0.03     # Fixed distance from center displacement
+
+# Model Architecture
+model:
+  sequence_length: 15   # Should match lookback_window
+  hidden_dim: 128
+  action_values: [-0.07, -0.06, -0.05, -0.04, -0.03, -0.02, -0.01, 0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07]
+
+# SAC Agent Hyperparameters
+agent:
+  learning_rate: 0.0001
+  gamma: 0.99           # Discount factor
+  tau: 0.005            # Soft update factor
+  target_entropy_factor: 0.98
+  initial_log_alpha: -1.6094379124341003  # log(0.2)
+
+# Replay Buffer Parameters
+replay_buffer:
+  capacity: 100000
+  per_alpha: 0.6        # Prioritization exponent
+  per_beta_start: 0.4   # Initial importance sampling exponent
+  per_beta_end: 1.0     # Final importance sampling exponent
+
+# Training Parameters
+training:
+  episodes: 10
+  batch_size: 64
+  save_frequency: 100   # Save model every N episodes
+
+# Logging and Monitoring
+logging:
+  log_level: "INFO"
+  tensorboard: true
+  log_dir: "logs/"
+  
+# Optional: Experiment tracking
+# wandb:
+#   project: "sac-trading"
+#   entity: "your-entity"
+#   tags: ["sac", "trading", "reinforcement-learning"]
